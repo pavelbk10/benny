@@ -241,7 +241,7 @@
                 <span class="eyebrow">לקוחות ממליצים</span>
                 <h2>מה הלקוחות שלנו אומרים</h2>
             </div>
-            <div class="testimonials-grid">
+            <div class="testimonials-grid" id="testimonialsGrid">
                 <article class="testimonial">
                     <div class="stars">★★★★★</div>
                     <p>"בני ליווה את העסק שלי מהיום הראשון. מקצועי, זמין וחוסך לי הרבה כסף וכאב ראש. ממליץ בחום!"</p>
@@ -274,6 +274,40 @@
                         <div><strong>שירה מזרחי</strong><small>בעלת חנות</small></div>
                     </div>
                 </article>
+            </div>
+            <div class="testimonials-cta">
+                <button type="button" class="btn btn-primary" id="openReviewBtn">✍️ השאירו לנו המלצה</button>
+            </div>
+        </div>
+
+        <!-- Review modal -->
+        <div class="review-modal" id="reviewModal" aria-hidden="true">
+            <div class="review-overlay" data-review-close></div>
+            <div class="review-dialog" role="dialog" aria-modal="true" aria-labelledby="reviewTitle">
+                <button type="button" class="review-close" id="reviewClose" aria-label="סגירה">&times;</button>
+                <h3 id="reviewTitle">שיתוף חוויה מהמשרד</h3>
+                <p class="review-sub">נשמח לשמוע על השירות שקיבלתם. ההמלצה תופיע באתר.</p>
+                <form id="reviewForm" class="review-form">
+                    <label>שם מלא
+                        <input type="text" name="name" maxlength="40" required>
+                    </label>
+                    <label>תפקיד / תחום עיסוק
+                        <input type="text" name="role" maxlength="50" placeholder="לדוגמה: בעל עסק עצמאי">
+                    </label>
+                    <label>דירוג</label>
+                    <div class="rating-input" id="ratingInput">
+                        <input type="radio" name="rating" id="star5" value="5" required><label for="star5" title="5 כוכבים">★</label>
+                        <input type="radio" name="rating" id="star4" value="4"><label for="star4" title="4 כוכבים">★</label>
+                        <input type="radio" name="rating" id="star3" value="3"><label for="star3" title="3 כוכבים">★</label>
+                        <input type="radio" name="rating" id="star2" value="2"><label for="star2" title="2 כוכבים">★</label>
+                        <input type="radio" name="rating" id="star1" value="1"><label for="star1" title="כוכב אחד">★</label>
+                    </div>
+                    <label>ההמלצה שלך
+                        <textarea name="text" rows="4" maxlength="400" required placeholder="ספרו על החוויה שלכם..."></textarea>
+                    </label>
+                    <p class="review-status" id="reviewStatus" role="status"></p>
+                    <button type="submit" class="btn btn-primary" id="reviewSubmit">שליחת ההמלצה</button>
+                </form>
             </div>
         </div>
     </section>
@@ -404,5 +438,7 @@
     </div>
 
     <script src="script.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="reviews.js" type="module"></script>
 </body>
 </html>

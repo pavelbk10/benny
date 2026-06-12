@@ -360,6 +360,57 @@ body::after { width: 460px; height: 460px; background: rgba(29,74,126,0.18); ins
 .testimonial-author strong { display: block; color: var(--navy); }
 .testimonial-author small { color: var(--muted); }
 
+/* Leave a review */
+.testimonials-cta { text-align: center; margin-block-start: 2.5rem; }
+.review-modal {
+    position: fixed; inset: 0; z-index: 2000;
+    display: none; align-items: center; justify-content: center;
+    padding: 1rem;
+}
+.review-modal.open { display: flex; }
+.review-overlay {
+    position: absolute; inset: 0;
+    background: rgba(11,31,58,0.55); backdrop-filter: blur(4px);
+}
+.review-dialog {
+    position: relative; z-index: 1;
+    background: var(--white); border-radius: var(--radius);
+    width: min(520px, 100%); max-height: 90vh; overflow-y: auto;
+    padding: 2.2rem; box-shadow: var(--shadow-lg);
+    animation: reviewPop 0.25s ease;
+}
+@keyframes reviewPop { from { opacity: 0; transform: translateY(20px) scale(0.97); } to { opacity: 1; transform: none; } }
+.review-close {
+    position: absolute; inset-block-start: 0.8rem; inset-inline-start: 1rem;
+    background: none; border: none; font-size: 1.8rem; line-height: 1;
+    color: var(--muted); cursor: pointer;
+}
+.review-close:hover { color: var(--navy); }
+.review-dialog h3 { color: var(--navy); font-size: 1.5rem; margin-block-end: 0.3rem; }
+.review-sub { color: var(--muted); margin-block-end: 1.5rem; }
+.review-form { display: flex; flex-direction: column; gap: 1rem; }
+.review-form label { font-weight: 500; color: var(--navy); display: flex; flex-direction: column; gap: 0.4rem; }
+.review-form input,
+.review-form textarea {
+    font: inherit; padding: 0.7rem 0.9rem;
+    border: 1px solid var(--border); border-radius: 12px;
+    background: var(--bg); color: var(--navy); resize: vertical;
+}
+.review-form input:focus,
+.review-form textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(212,175,55,0.2); }
+/* star rating input (RTL: stars laid right-to-left) */
+.rating-input { display: inline-flex; flex-direction: row-reverse; justify-content: flex-end; gap: 0.2rem; }
+.rating-input input { position: absolute; opacity: 0; width: 0; height: 0; }
+.rating-input label {
+    font-size: 1.9rem; line-height: 1; color: #d8d8d8; cursor: pointer;
+    transition: color 0.15s; margin: 0;
+}
+.rating-input label:hover,
+.rating-input label:hover ~ label,
+.rating-input input:checked ~ label { color: var(--accent); }
+.review-status { min-height: 1.2em; font-size: 0.95rem; margin: 0; }
+.review-form .btn { margin-block-start: 0.3rem; }
+
 /* Contact */
 .contact { background: var(--hero-grad); color: var(--white); position: relative; overflow: hidden; }
 .contact::before {
