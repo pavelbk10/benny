@@ -335,7 +335,8 @@ body::after { width: 460px; height: 460px; background: rgba(29,74,126,0.18); ins
 
 /* Testimonials */
 .testimonials { background: var(--white); }
-.testimonials-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem; }
+.testimonials-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; transition: opacity 0.4s ease; }
+.testimonials-grid.fading { opacity: 0; }
 .testimonial {
     background: var(--bg);
     border: 1px solid var(--border);

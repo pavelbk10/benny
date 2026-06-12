@@ -53,26 +53,76 @@ function buildCard({ name, role, rating, text }) {
     return article;
 }
 
-function renderReviews(list) {
-    list.forEach(r => grid.appendChild(buildCard(r)));
+// --- קרוסלה: הצגת 3 המלצות שמתחלפות כל 5 שניות ---
+const VISIBLE = 3;
+const ROTATE_MS = 5000;
+let allReviews = [];
+let rotateIndex = 0;
+let rotateTimer = null;
+
+function parseStaticCard(article) {
+    const starsText = article.querySelector('.stars')?.textContent || '';
+    const rating = (starsText.match(/★/g) || []).length || 5;
+    const text = (article.querySelector('p')?.textContent || '').replace(/^["“”]|["“”]$/g, '').trim();
+    const name = article.querySelector('.testimonial-author strong')?.textContent.trim() || '';
+    const role = article.querySelector('.testimonial-author small')?.textContent.trim() || '';
+    return { name, role, rating, text };
+}
+
+function renderSlide() {
+    const count = allReviews.length;
+    if (!count) return;
+    const visible = Math.min(VISIBLE, count);
+    grid.classList.add('fading');
+    setTimeout(() => {
+        grid.innerHTML = '';
+        for (let i = 0; i < visible; i++) {
+            grid.appendChild(buildCard(allReviews[(rotateIndex + i) % count]));
+        }
+        grid.classList.remove('fading');
+    }, 400);
+}
+
+function stopRotation() {
+    if (rotateTimer) { clearInterval(rotateTimer); rotateTimer = null; }
+}
+
+function startRotation() {
+    stopRotation();
+    if (allReviews.length <= VISIBLE) return;
+    rotateTimer = setInterval(() => {
+        rotateIndex = (rotateIndex + VISIBLE) % allReviews.length;
+        renderSlide();
+    }, ROTATE_MS);
+}
+
+// השהיית הקרוסלה כשהעכבר מעל ההמלצות
+if (grid) {
+    grid.addEventListener('mouseenter', stopRotation);
+    grid.addEventListener('mouseleave', startRotation);
 }
 
 // --- טעינת המלצות ---
 async function loadReviews() {
+    // המלצות ברירת מחדל מתוך ה-HTML הסטטי
+    const staticReviews = Array.from(grid.querySelectorAll('.testimonial')).map(parseStaticCard);
+    let loaded = [];
     if (db && firestore) {
         try {
             const { collection, getDocs, query, orderBy } = firestore;
             const q = query(collection(db, 'testimonials'), orderBy('createdAt', 'desc'));
             const snap = await getDocs(q);
-            renderReviews(snap.docs.map(d => d.data()));
-            return;
+            loaded = snap.docs.map(d => d.data());
         } catch (err) {
             console.warn('Failed to load reviews from Firestore', err);
         }
+    } else {
+        loaded = JSON.parse(localStorage.getItem('reviews') || '[]');
     }
-    // fallback מקומי
-    const local = JSON.parse(localStorage.getItem('reviews') || '[]');
-    renderReviews(local);
+    allReviews = [...loaded, ...staticReviews];
+    rotateIndex = 0;
+    renderSlide();
+    startRotation();
 }
 
 // --- שמירת המלצה ---
@@ -136,8 +186,11 @@ if (formEl) {
 
         try {
             await saveReview(review);
-            // הצגה מיידית בראש הרשימה
-            grid.insertBefore(buildCard(review), grid.firstChild);
+            // הוספה לראש הרשימה והצגה מיידית
+            allReviews.unshift(review);
+            rotateIndex = 0;
+            renderSlide();
+            startRotation();
             statusEl.style.color = '#1b7a4b';
             statusEl.textContent = 'תודה רבה! ההמלצה התקבלה.';
             formEl.reset();
