@@ -1,0 +1,19 @@
+{
+  "name": "בני מלמן — משרד רואה חשבון",
+  "short_name": "בני מלמן",
+  "description": "משרד רואה חשבון בנתניה — הנהלת חשבונות, ייעוץ מס וליווי עסקי.",
+  "lang": "he",
+  "dir": "rtl",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0b1f3a",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
