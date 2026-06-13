@@ -21,7 +21,7 @@ if (navToggle && navMenu) {
 }
 
 // Reveal on scroll
-const revealEls = document.querySelectorAll('.section-head, .price-card, .testimonial, .gallery-item, .about-text, .about-photo, .extra-services, .value-card, .faq-item');
+const revealEls = document.querySelectorAll('.section-head, .price-card, .testimonial, .gallery-item, .about-text, .about-photo, .extra-services, .value-card, .faq-item, .blog-card');
 revealEls.forEach(el => el.setAttribute('data-reveal', ''));
 const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
@@ -33,9 +33,10 @@ const observer = new IntersectionObserver((entries) => {
 }, { threshold: 0.15 });
 revealEls.forEach(el => observer.observe(el));
 
-// Contact form validation + feedback
+// Contact form -> send to WhatsApp
 const form = document.getElementById('contactForm');
 const status = document.getElementById('formStatus');
+const OFFICE_WHATSAPP = '972544236696';
 if (form) {
 form.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -62,7 +63,21 @@ form.addEventListener('submit', (e) => {
         return;
     }
 
-    status.textContent = 'תודה! הפנייה נשלחה ונחזור אליך בהקדם.';
+    const name = form.querySelector('#name').value.trim();
+    const phone = form.querySelector('#phone').value.trim();
+    const mail = email.value.trim();
+    const message = form.querySelector('#message').value.trim();
+
+    let text = `שלום, הגעתי דרך האתר ואשמח ליצור קשר.%0A%0A`;
+    text += `*שם:* ${name}%0A`;
+    text += `*טלפון:* ${phone}%0A`;
+    if (mail) text += `*אימייל:* ${mail}%0A`;
+    if (message) text += `*פנייה:* ${message}`;
+
+    const url = `https://wa.me/${OFFICE_WHATSAPP}?text=${encodeURIComponent(decodeURIComponent(text))}`;
+    window.open(url, '_blank', 'noopener');
+
+    status.textContent = 'מעבירים אתכם לוואטסאפ לשליחת הפנייה...';
     status.style.color = '#1b7a4b';
     form.reset();
 });
@@ -147,3 +162,36 @@ if (a11yToggle) {
         localStorage.removeItem('a11y');
     });
 }
+
+// ===== Blog article modal =====
+const articleModal = document.getElementById('articleModal');
+const articleContent = document.getElementById('articleContent');
+const articleClose = document.getElementById('articleClose');
+if (articleModal) {
+    const openArticle = (id) => {
+        const src = document.getElementById('src-' + id);
+        if (!src) return;
+        articleContent.innerHTML = src.innerHTML;
+        articleContent.querySelector('h2')?.setAttribute('id', 'articleTitle');
+        articleModal.classList.add('open');
+        articleModal.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+        articleModal.querySelector('.article-dialog').scrollTop = 0;
+    };
+    const closeArticle = () => {
+        articleModal.classList.remove('open');
+        articleModal.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+    };
+
+    document.querySelectorAll('.blog-readmore').forEach(btn => {
+        btn.addEventListener('click', () => openArticle(btn.dataset.article));
+    });
+    articleClose.addEventListener('click', closeArticle);
+    articleModal.querySelectorAll('[data-article-close]').forEach(el =>
+        el.addEventListener('click', closeArticle));
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && articleModal.classList.contains('open')) closeArticle();
+    });
+}
+
