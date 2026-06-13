@@ -206,6 +206,37 @@ if (blogGrid) {
     let blogIndex = 0;
     let blogTimer = null;
 
+    const pageCount = Math.ceil(allCards.length / BLOG_VISIBLE);
+
+    // Build navigation dots below the grid
+    let dots = [];
+    let dotsWrap = null;
+    if (pageCount > 1) {
+        dotsWrap = document.createElement('div');
+        dotsWrap.className = 'blog-dots';
+        dotsWrap.setAttribute('role', 'tablist');
+        dotsWrap.setAttribute('aria-label', 'בחירת קבוצת מאמרים');
+        for (let p = 0; p < pageCount; p++) {
+            const dot = document.createElement('button');
+            dot.type = 'button';
+            dot.className = 'blog-dot';
+            dot.setAttribute('aria-label', `קבוצת מאמרים ${p + 1}`);
+            dot.addEventListener('click', () => goToPage(p));
+            dotsWrap.appendChild(dot);
+            dots.push(dot);
+        }
+        blogGrid.parentNode.insertBefore(dotsWrap, blogGrid.nextSibling);
+    }
+
+    const updateDots = () => {
+        const activePage = Math.floor(blogIndex / BLOG_VISIBLE) % pageCount;
+        dots.forEach((dot, i) => {
+            const isActive = i === activePage;
+            dot.classList.toggle('active', isActive);
+            dot.setAttribute('aria-selected', isActive ? 'true' : 'false');
+        });
+    };
+
     const renderBlogSlide = () => {
         const count = allCards.length;
         if (!count) return;
@@ -222,6 +253,7 @@ if (blogGrid) {
             });
             blogGrid.classList.remove('fading');
         }, 400);
+        updateDots();
     };
     const stopBlogRotation = () => {
         if (blogTimer) { clearInterval(blogTimer); blogTimer = null; }
@@ -234,9 +266,16 @@ if (blogGrid) {
             renderBlogSlide();
         }, BLOG_ROTATE_MS);
     };
+    // Jump to a chosen page and restart the timer (so it won't switch instantly)
+    function goToPage(page) {
+        blogIndex = (page * BLOG_VISIBLE) % allCards.length;
+        renderBlogSlide();
+        startBlogRotation();
+    }
 
     blogGrid.addEventListener('mouseenter', stopBlogRotation);
     blogGrid.addEventListener('mouseleave', startBlogRotation);
+
 
     // Delegated handler so rotating cards keep working
     blogGrid.addEventListener('click', (e) => {

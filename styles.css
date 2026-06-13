@@ -416,6 +416,10 @@ body::after { width: 460px; height: 460px; background: rgba(29,74,126,0.18); ins
 .blog { background: var(--bg); }
 .blog-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; transition: opacity .4s ease; }
 .blog-grid.fading { opacity: 0; }
+.blog-dots { display: flex; justify-content: center; gap: .6rem; margin-top: 2rem; }
+.blog-dot { width: 12px; height: 12px; padding: 0; border: none; border-radius: 50%; background: #d3dae6; cursor: pointer; transition: background .25s ease, transform .25s ease; }
+.blog-dot:hover { background: #aebccf; }
+.blog-dot.active { background: var(--accent, #d4af37); transform: scale(1.25); }
 .blog-card {
     background: var(--white);
     border: 1px solid var(--border);
