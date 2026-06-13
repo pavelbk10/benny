@@ -705,6 +705,8 @@ body::after { width: 460px; height: 460px; background: rgba(29,74,126,0.18); ins
 .legal-content a { color: var(--accent); font-weight: 600; }
 .legal-content a:hover { text-decoration: underline; }
 .legal-back { display: inline-block; margin-block-start: 2rem; }
+.legal-content a.legal-back { color: var(--navy); font-weight: 700; }
+.legal-content a.legal-back:hover { text-decoration: none; }
 
 /* Responsive */
 @media (max-width: 900px) {
