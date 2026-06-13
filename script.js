@@ -184,6 +184,8 @@ if (articleModal) {
         document.body.style.overflow = '';
     };
 
+    window.openArticleById = openArticle;
+
     document.querySelectorAll('.blog-readmore').forEach(btn => {
         btn.addEventListener('click', () => openArticle(btn.dataset.article));
     });
@@ -193,5 +195,54 @@ if (articleModal) {
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && articleModal.classList.contains('open')) closeArticle();
     });
+}
+
+// ===== Blog carousel: show 3 articles, rotate every 7s =====
+const blogGrid = document.getElementById('blogGrid');
+if (blogGrid) {
+    const BLOG_VISIBLE = 3;
+    const BLOG_ROTATE_MS = 7000;
+    const allCards = Array.from(blogGrid.children).map(el => el.outerHTML);
+    let blogIndex = 0;
+    let blogTimer = null;
+
+    const renderBlogSlide = () => {
+        const count = allCards.length;
+        if (!count) return;
+        const visible = Math.min(BLOG_VISIBLE, count);
+        blogGrid.classList.add('fading');
+        setTimeout(() => {
+            blogGrid.innerHTML = '';
+            for (let i = 0; i < visible; i++) {
+                blogGrid.insertAdjacentHTML('beforeend', allCards[(blogIndex + i) % count]);
+            }
+            blogGrid.classList.remove('fading');
+        }, 400);
+    };
+    const stopBlogRotation = () => {
+        if (blogTimer) { clearInterval(blogTimer); blogTimer = null; }
+    };
+    const startBlogRotation = () => {
+        stopBlogRotation();
+        if (allCards.length <= BLOG_VISIBLE) return;
+        blogTimer = setInterval(() => {
+            blogIndex = (blogIndex + BLOG_VISIBLE) % allCards.length;
+            renderBlogSlide();
+        }, BLOG_ROTATE_MS);
+    };
+
+    blogGrid.addEventListener('mouseenter', stopBlogRotation);
+    blogGrid.addEventListener('mouseleave', startBlogRotation);
+
+    // Delegated handler so rotating cards keep working
+    blogGrid.addEventListener('click', (e) => {
+        const btn = e.target.closest('.blog-readmore');
+        if (btn && typeof window.openArticleById === 'function') {
+            window.openArticleById(btn.dataset.article);
+        }
+    });
+
+    renderBlogSlide();
+    startBlogRotation();
 }
 

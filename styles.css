@@ -414,7 +414,8 @@ body::after { width: 460px; height: 460px; background: rgba(29,74,126,0.18); ins
 
 /* Blog / Articles */
 .blog { background: var(--bg); }
-.blog-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; }
+.blog-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; transition: opacity .4s ease; }
+.blog-grid.fading { opacity: 0; }
 .blog-card {
     background: var(--white);
     border: 1px solid var(--border);
