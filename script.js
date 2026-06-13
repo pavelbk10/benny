@@ -216,6 +216,10 @@ if (blogGrid) {
             for (let i = 0; i < visible; i++) {
                 blogGrid.insertAdjacentHTML('beforeend', allCards[(blogIndex + i) % count]);
             }
+            blogGrid.querySelectorAll('.blog-card').forEach(card => {
+                card.removeAttribute('data-reveal');
+                card.classList.add('visible');
+            });
             blogGrid.classList.remove('fading');
         }, 400);
     };
